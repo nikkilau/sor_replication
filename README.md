@@ -36,11 +36,18 @@ formulations for system-level and sojourn-time metrics.
   space to quantify how robust the fitting approach is to prior
   misspecification.
 
+## Quick start: browse results
+
+Open **[results_summary.ipynb](results_summary.ipynb)** — a Jupyter notebook that
+displays all reproduction figures, metrics tables, and explanations in one place.
+Recommended for the course presentation.
+
 ## Repository structure
 
 ```
 .
 ├── README.md                    # Project overview (this file)
+├── results_summary.ipynb        # All results in one notebook
 ├── results/                     # Reproduction figures and CSV metrics
 │   ├── figure5_replication.png
 │   ├── stability_replication.png
