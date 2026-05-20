@@ -1,17 +1,11 @@
 from __future__ import annotations
 
-import argparse
-import sys
 from pathlib import Path
-
-SRC_DIR = Path(__file__).resolve().parents[1]
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from project_reproduction.utils import (
+from reproduction.utils import (
     add_common_paths,
     class_change_matrix,
     ensure_output_dirs,

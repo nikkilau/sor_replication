@@ -15,7 +15,7 @@ a discrete-event simulation (using Ciw) and two continuous-time Markov chain
 formulations for system-level and sojourn-time metrics.
 
 **Original code:** [geraintpalmer/DynamicClasses](https://github.com/geraintpalmer/DynamicClasses)
-(MIT License — see [LICENSE](DynamicClasses-main/LICENSE))
+(MIT License — see [original/LICENSE](original/LICENSE))
 
 ## What was reproduced
 
@@ -40,24 +40,36 @@ formulations for system-level and sojourn-time metrics.
 
 ```
 .
-├── DynamicClasses-main/         # Original code + our additions
-│   ├── src/                     # Paper source code (Ciw models, experiments)
-│   │   └── project_reproduction/  # Our reproduction & extension scripts
-│   ├── results/                 # Generated figures and CSVs
-│   └── notes/                   # Working notes
-├── Queues under stochastic priority switching.pdf  # Original paper
+├── README.md                    # Project overview (this file)
+├── results/                     # Reproduction figures and CSV metrics
+│   ├── figure5_replication.png
+│   ├── stability_replication.png
+│   ├── bounded_markov_replication.png
+│   └── extension_calibration_heatmap.png
+├── reproduction/                # Our reproduction & extension scripts
+│   ├── reproduce_figure5.py
+│   ├── reproduce_stability.py
+│   ├── reproduce_bounded_markov.py
+│   ├── extension_calibrate_H.py
+│   └── run_all.py               # Run all scripts in order
+├── original/                    # Original paper code (geraintpalmer/DynamicClasses)
+│   └── src/models/              # Ciw queue models
 ├── SOR proposal.md              # Project proposal (Chinese)
-└── plan.md                      # Detailed project plan
+├── plan.md                      # Detailed project plan
+└── Queues under stochastic priority switching.pdf  # Original paper
 ```
 
 ## Running the reproduction scripts
 
 ```bash
-# From DynamicClasses-main/src, with the virtual environment active:
-python project_reproduction/reproduce_figure5.py
-python project_reproduction/reproduce_stability.py
-python project_reproduction/reproduce_bounded_markov.py
-python project_reproduction/extension_calibrate_H.py
+# From the repo root:
+python reproduction/reproduce_figure5.py
+python reproduction/reproduce_stability.py
+python reproduction/reproduce_bounded_markov.py
+python reproduction/extension_calibrate_H.py
+
+# Or run all at once:
+python reproduction/run_all.py
 ```
 
 Increase `--bounds`, `--trials`, or calibration grid sizes for higher-resolution
@@ -66,5 +78,5 @@ final runs.
 ## License
 
 The original code by Geraint Palmer is distributed under the MIT License
-(see [DynamicClasses-main/LICENSE](DynamicClasses-main/LICENSE)). Our
+(see [original/LICENSE](original/LICENSE)). Our
 reproduction and extension code is also available under the same terms.

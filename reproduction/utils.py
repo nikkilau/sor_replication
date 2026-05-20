@@ -13,14 +13,14 @@ import numpy as np
 import pandas as pd
 from scipy.stats import wasserstein_distance
 
-SRC_DIR = Path(__file__).resolve().parents[1]
-REPO_ROOT = SRC_DIR.parent
+REPO_ROOT = Path(__file__).resolve().parents[1]
+ORIGINAL_SRC = REPO_ROOT / "original" / "src"
 RESULTS_DIR = REPO_ROOT / "results"
-NOTES_DIR = REPO_ROOT / "notes"
-DATA_PATH = SRC_DIR / "motivating_data" / "Surgery Treatment.csv"
+NOTES_DIR = REPO_ROOT / "original" / "notes"
+DATA_PATH = ORIGINAL_SRC / "motivating_data" / "Surgery Treatment.csv"
 
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
+if str(ORIGINAL_SRC) not in sys.path:
+    sys.path.insert(0, str(ORIGINAL_SRC))
 
 import models  # noqa: E402
 

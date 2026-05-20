@@ -1,18 +1,12 @@
 from __future__ import annotations
 
-import argparse
-import sys
 from pathlib import Path
-
-SRC_DIR = Path(__file__).resolve().parents[1]
-if str(SRC_DIR) not in sys.path:
-    sys.path.insert(0, str(SRC_DIR))
 
 import matplotlib.pyplot as plt
 import pandas as pd
 
 import models
-from project_reproduction.utils import add_common_paths, class_change_matrix, ensure_output_dirs, queue_history_frame
+from reproduction.utils import add_common_paths, class_change_matrix, ensure_output_dirs, queue_history_frame
 
 
 def build_parser() -> argparse.ArgumentParser:
