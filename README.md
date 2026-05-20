@@ -66,6 +66,15 @@ Recommended for the course presentation.
 └── Queues under stochastic priority switching.pdf  # Original paper
 ```
 
+## Setup
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate          # Windows
+# source .venv/bin/activate     # macOS / Linux
+pip install -r original/requirements.txt
+```
+
 ## Running the reproduction scripts
 
 ```bash
