@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ import pandas as pd
 from reproduction.utils import (
     add_common_paths,
     ensure_output_dirs,
+    ensure_results_dir,
     load_surgery_data,
     overtaking_metrics,
     parse_float_list,
@@ -31,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     ensure_output_dirs()
-    args.results_dir.mkdir(exist_ok=True)
+    ensure_results_dir(args.results_dir)
 
     observed = load_surgery_data()
     h12_values = parse_float_list(args.h12_values)
@@ -58,8 +60,15 @@ def main() -> None:
                 seed=args.seed,
             )
             metrics = overtaking_metrics(sim, observed)
-            row = {"h12": h12, "h21": h21, **metrics}
-            row["combined_loss"] = row["wasserstein"] + row["mape"]
+            row = {
+                "h12": h12,
+                "h21": h21,
+                "trials": args.trials,
+                "seed": args.seed,
+                "arrival_rate": args.arrival_rate,
+                "service_rate": args.service_rate,
+                **metrics,
+            }
             rows.append(row)
 
             ax.hist(
@@ -103,7 +112,7 @@ def main() -> None:
     out_png = args.results_dir / "figure5_replication.png"
     out_csv = args.results_dir / "figure5_metrics.csv"
     fig.savefig(out_png, dpi=220)
-    pd.DataFrame(rows).sort_values("combined_loss").to_csv(out_csv, index=False)
+    pd.DataFrame(rows).sort_values(["h12", "h21"]).to_csv(out_csv, index=False)
     print(f"wrote {out_png}")
     print(f"wrote {out_csv}")
 

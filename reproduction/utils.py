@@ -26,8 +26,13 @@ import models  # noqa: E402
 
 
 def ensure_output_dirs() -> None:
-    RESULTS_DIR.mkdir(exist_ok=True)
-    NOTES_DIR.mkdir(exist_ok=True)
+    RESULTS_DIR.mkdir(parents=True, exist_ok=True)
+    NOTES_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def ensure_results_dir(results_dir: Path) -> Path:
+    results_dir.mkdir(parents=True, exist_ok=True)
+    return results_dir
 
 
 def parse_float_list(raw: str) -> list[float]:
@@ -61,10 +66,43 @@ def load_surgery_data(path: Path = DATA_PATH) -> pd.DataFrame:
     return data
 
 
-def class_change_matrix(theta12: float | None, theta21: float | None) -> list[list[float | None]]:
-    t12 = None if theta12 is None or theta12 <= 0 else float(theta12)
-    t21 = None if theta21 is None or theta21 <= 0 else float(theta21)
+def _simulation_rate(theta: float | None) -> float | None:
+    if theta is None:
+        return None
+    theta = float(theta)
+    return theta if theta > 0 else None
+
+
+def _markov_rate(theta: float | None) -> float:
+    if theta is None:
+        return 0.0
+    theta = float(theta)
+    return theta if theta > 0 else 0.0
+
+
+def simulation_class_change_matrix(
+    theta12: float | None, theta21: float | None
+) -> list[list[float | None]]:
+    """Ciw uses None, not a tiny positive rate, for disabled class switches."""
+    t12 = _simulation_rate(theta12)
+    t21 = _simulation_rate(theta21)
     return [[None, t12], [t21, None]]
+
+
+def markov_class_change_matrix(
+    theta12: float | None, theta21: float | None
+) -> list[list[float | None]]:
+    """The Markov-chain code can multiply exact zero rates directly."""
+    t12 = _markov_rate(theta12)
+    t21 = _markov_rate(theta21)
+    return [[None, t12], [t21, None]]
+
+
+def class_change_matrix(
+    theta12: float | None, theta21: float | None
+) -> list[list[float | None]]:
+    """Backward-compatible alias for Markov-chain calculations."""
+    return markov_class_change_matrix(theta12, theta21)
 
 
 def records_to_frame(records) -> pd.DataFrame:
@@ -73,8 +111,8 @@ def records_to_frame(records) -> pd.DataFrame:
 
 
 def simulate_overtaking(
-    theta12: float,
-    theta21: float,
+    theta12: float | None,
+    theta21: float | None,
     arrival_rate: float = 0.463,
     service_rate: float = 0.5,
     horizon: int = 365,
@@ -87,7 +125,7 @@ def simulate_overtaking(
         num_servers=1,
         arrival_rates=[arrival_rate, 1e-15],
         service_rates=[service_rate, service_rate],
-        class_change_rate_matrix=class_change_matrix(theta12, theta21),
+        class_change_rate_matrix=simulation_class_change_matrix(theta12, theta21),
         max_simulation_time=max_time,
         progress_bar=False,
         seed=seed,

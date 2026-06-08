@@ -1,0 +1,342 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+
+% ── Colors ──
+\usepackage{xcolor}
+\definecolor{primary}{HTML}{334155}
+\definecolor{accent}{HTML}{2563EB}
+\definecolor{lightbg}{HTML}{F8FAFC}
+
+% ── Theme ──
+\usetheme{default}
+\usecolortheme{default}
+\setbeamercolor{frametitle}{fg=primary}
+\setbeamercolor{title}{fg=primary}
+\setbeamercolor{structure}{fg=accent}
+\setbeamercolor{itemize item}{fg=primary}
+\setbeamercolor{itemize subitem}{fg=accent}
+\setbeamercolor{block title}{fg=white,bg=primary}
+\setbeamercolor{block body}{fg=primary,bg=lightbg}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{%
+  \hfill\insertframenumber/\inserttotalframenumber\hspace{2mm}\vspace{2mm}%
+}
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
+% ── Packages ──
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\graphicspath{{../results/}}
+
+% ── Metadata ──
+\title{Queues under Stochastic Priority Switching}
+\subtitle{Model Analysis, Numerical Replication, and Extensions}
+\author{%
+  \small Stochastic Operations Research --- Course Project}
+\date{June 2026}
+
+\begin{document}
+
+% ════════════════════════════════════════
+% Slide 1: Title
+% ════════════════════════════════════════
+\begin{frame}
+\titlepage
+\vspace{-1em}
+\begin{center}
+\small
+\textit{Palmer, G. I., Panayidis, M., Knight, V., \& Williams, E. (2026). JORS.}
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 2: Motivation
+% ════════════════════════════════════════
+\begin{frame}{Motivation: When FIFO Fails}
+\begin{columns}[T]
+\column{0.55\textwidth}
+\begin{block}{Real-world problem}
+\begin{itemize}
+  \item Surgical endoscopy waiting lists
+  \item Patients' urgency \textbf{changes} while waiting
+  \item Observed service order $\neq$ arrival order
+  \item Large ``overtakes'': bumped up \& bumped down
+\end{itemize}
+\end{block}
+
+\column{0.45\textwidth}
+\begin{block}{Research question}
+\small
+Can \textbf{stochastic priority switching} explain observed non-FIFO
+behavior when the true scheduling rule is unknown?
+\end{block}
+\end{columns}
+
+\vspace{1em}
+\begin{center}
+\textbf{Core idea:} Model an unknown service discipline as a random walk over priority classes.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 3: Model
+% ════════════════════════════════════════
+\begin{frame}{Queueing Model}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\textbf{M/M/c with $K$ priority classes}
+\begin{itemize}
+  \item $\lambda_k$: arrival rate of class $k$
+  \item $\mu_k$: service rate of class $k$
+  \item $c$: number of servers
+  \item Lower index = higher priority
+  \item Preemptive priority
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Switching matrix $\Theta = (h_{ij})$}
+\begin{itemize}
+  \item $h_{i,i-1}$: upgrade rate
+  \item $h_{i,i+1}$: downgrade rate
+  \item $h_{ij}\;(|i-j|>1)$: skip-grade jumps
+  \item Exponential switching times
+  \item $\Rightarrow$ memoryless CTMC
+\end{itemize}
+\end{columns}
+
+\vspace{1em}
+\begin{center}
+\small Customers randomly switch priority classes while waiting --- both \textbf{up} and \textbf{down}.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 4: Methods
+% ════════════════════════════════════════
+\begin{frame}{Methods: Dual Approach}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{1. Discrete-Event Simulation (Ciw)}
+\begin{itemize}
+  \item Poisson arrivals + Exp service + Exp switching
+  \item Preemptive priority events
+  \item Flexible: supports non-exponential distributions
+  \item Noisy: requires many trials
+\end{itemize}
+\end{block}
+
+\column{0.52\textwidth}
+\begin{block}{2. Dual Markov Chain (analytical)}
+\begin{itemize}
+  \item \textbf{Ergodic chain:} state $s = (s_0,\ldots,s_{K-1})$
+  \item $\to$ steady-state $L_k$, queue composition
+  \item \textbf{Absorbing chain:} tagged customer
+  \item $\to$ sojourn time $W$ (phase-type distribution)
+\end{itemize}
+\end{block}
+\end{columns}
+
+\vspace{1em}
+\begin{alertblock}{Challenge: infinite state space}
+Truncate with \textbf{finite bound $b$} $\;\to\;$ validate via $Q(b)$ and $P(b)$.
+\end{alertblock}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 5: Reproduction 1 — Overtaking
+% ════════════════════════════════════════
+\begin{frame}{Reproduction 1: Overtaking Distribution (Fig.\ 5)}
+
+\centering
+\includegraphics[width=0.72\textwidth]{figure5_replication.png}
+
+\vspace{-0.5em}
+\begin{columns}[T]
+\column{0.45\textwidth}
+\footnotesize
+Grid search over $(\theta_{12}, \theta_{21})$\\
+$\theta_{12}\in\{1,2,3\},\; \theta_{21}\in\{0,1,2\}$
+\column{0.55\textwidth}
+\footnotesize
+Current run: lowest combined loss at $\theta_{12}=1,\; \theta_{21}=2$\\
+Paper candidate $(3,1)$ remains close; rerun more trials for final ranking
+\end{columns}
+
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 6: Reproduction 2 — Stability
+% ════════════════════════════════════════
+\begin{frame}{Reproduction 2: Stability Analysis}
+
+\centering
+\includegraphics[width=0.78\textwidth]{stability_replication.png}
+
+\vspace{-0.5em}
+\begin{columns}[T]
+\column{0.5\textwidth}
+\footnotesize
+\textbf{Stable-like:} $\mu_1\!=\!\mu_2\!=\!0.5$\\
+ADF $p < 0.05$, queue remains bounded
+\column{0.5\textwidth}
+\footnotesize
+\textbf{Unstable-like:} $\mu_1\!=\!0.4,\mu_2\!=\!0.6$\\
+ADF $p \gg 0.05$, queue grows indefinitely
+\end{columns}
+\vspace{0.3em}
+\begin{center}
+\footnotesize Illustrates the stable/nonstationary contrast used in Proposition 1.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 7: Reproduction 3 — Bounded Markov
+% ════════════════════════════════════════
+\begin{frame}{Reproduction 3: Bounded Markov Approximation}
+
+\centering
+\includegraphics[width=0.85\textwidth]{bounded_markov_replication.png}
+
+\vspace{-0.5em}
+\begin{center}
+\footnotesize Current short run: boundary measures decrease for $b=2,\ldots,4$; use larger $b$ before final convergence claims.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 8: Reproduction 4 — Effect of Theta
+% ════════════════════════════════════════
+\begin{frame}{Reproduction 4: Effect of $\Theta$ Matrix}
+
+\centering
+\includegraphics[width=0.78\textwidth]{effect_of_H_C_prioritized_faster.png}
+
+\vspace{-0.5em}
+\begin{center}
+\footnotesize
+Scenario C: prioritized class has \textbf{faster} service ($\mu_1=3.5, \mu_2=2.5$)\\
+$L_k$, $W_k$, Var$[W]$ heatmaps over $\theta_{12}\times\theta_{21}$ grid
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 9: MC vs Simulation
+% ════════════════════════════════════════
+\begin{frame}{Validation: Markov Chain vs Simulation}
+
+\centering
+\includegraphics[width=0.88\textwidth]{mc_vs_sim_comparison.png}
+
+\vspace{-0.5em}
+\begin{center}
+\footnotesize
+State distribution error decreases with $b$ in this run\\
+Sojourn-time relative error stays around 6--8\%, so more simulation time is needed\\
+Conclusion: useful validation check, not yet a definitive convergence result.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 10: Extension — Fine-Grid Calibration
+% ════════════════════════════════════════
+\begin{frame}{Extension 1: Fine-Grid $\Theta$ Calibration}
+
+\centering
+\includegraphics[width=0.55\textwidth]{extension_calibration_heatmap.png}
+
+\vspace{-0.5em}
+\begin{center}
+\footnotesize
+Paper: coarse $3\times3$ grid; our work: denser $11\times7$ grid\\
+Current best point is seed/trial dependent and should be read from the CSV\\
+$\Rightarrow$ useful sensitivity check, not a definitive optimizer
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 11: Extension — Sojourn Variance
+% ════════════════════════════════════════
+\begin{frame}{Extension 2: Sojourn Time Variance}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sojourn_variance_convergence.png}
+\footnotesize Var$[W]$ and CV$[W]$ converge with $b$
+
+\column{0.52\textwidth}
+\centering
+\includegraphics[width=\textwidth]{sojourn_variance_heatmap.png}
+\footnotesize Var$[W]$ and CV$[W]$ over $\Theta$ space
+\end{columns}
+
+\vspace{0.3em}
+\begin{center}
+\footnotesize
+Absorbing-chain moments give a compact view of \textbf{second-moment} behavior.
+\end{center}
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 12: Summary & Discussion
+% ════════════════════════════════════════
+\begin{frame}{Summary \& Discussion}
+
+\begin{columns}[T]
+\column{0.48\textwidth}
+\begin{block}{Implemented analyses}
+\footnotesize
+\begin{itemize}
+  \item Overtaking distribution fitting (Fig.\ 5)
+  \item Stability / ADF test (Proposition 1)
+  \item Bounded Markov convergence ($Q(b)$, $P(b)$)
+  \item Effect of $\Theta$ matrix (3 scenarios)
+\end{itemize}
+\end{block}
+
+\column{0.52\textwidth}
+\begin{block}{Extra checks and extensions}
+\footnotesize
+\begin{itemize}
+  \item Systematic MC vs Simulation validation
+  \item Fine-grid calibration of $\Theta$ (loss landscape)
+  \item Sojourn-time variance visualization
+\end{itemize}
+\end{block}
+\end{columns}
+
+\vspace{0.8em}
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+\textbf{Limitations:} &
+  Exponential assumptions \textbar\ CTMC state-space explosion \textbar\ ADF is empirical \\[0.4em]
+\textbf{Future work:} &
+  Non-exponential switching (Erlang, Weibull) \textbar\ Multi-server \textbar\ Real data fitting \\
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+% ════════════════════════════════════════
+% Slide 13: End
+% ════════════════════════════════════════
+\begin{frame}
+\begin{center}
+{\Large \textbf{Thank you!}}\\[2em]
+
+{\footnotesize
+Original paper: Palmer et al.\ (2026), \textit{JORS}\\[0.5em]
+Code: \texttt{github.com/geraintpalmer/DynamicClasses}\\[0.5em]
+Reproduction: \texttt{github.com/[repo]}\\[2em]
+
+\textit{Questions \& Discussion}
+}
+\end{center}
+\end{frame}
+
+\end{document}

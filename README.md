@@ -1,4 +1,4 @@
-# Queues under Stochastic Priority Switching — Reproduction & Extension
+# Queues under Stochastic Priority Switching - Reproduction & Extension
 
 Course project for **Stochastic Operations Research (SOR)**, reproducing and
 extending the paper:
@@ -10,82 +10,140 @@ extending the paper:
 ## Overview
 
 The paper proposes a generalized `M/M/c` queueing model where customers
-randomly switch priority classes while waiting in the queue. It develops both
-a discrete-event simulation (using Ciw) and two continuous-time Markov chain
+randomly switch priority classes while waiting in the queue. It develops a
+discrete-event simulation model using Ciw and continuous-time Markov chain
 formulations for system-level and sojourn-time metrics.
 
-**Original code:** [geraintpalmer/DynamicClasses](https://github.com/geraintpalmer/DynamicClasses)
-(MIT License — see [original/LICENSE](original/LICENSE))
+Original code: [geraintpalmer/DynamicClasses](https://github.com/geraintpalmer/DynamicClasses)
+(MIT License, see `original/LICENSE`).
 
-## What was reproduced
+## Implemented Reproductions
 
-- **Figure 5** — Black-box service fitting via Wasserstein distance / MAPE
-  minimization
-- **Stability analysis** — ADF test replication for non-stationary queue
-  identification (Proposition 1)
-- **Bounded Markov chain** — The b-bounded truncation approximation, including
-  boundary accuracy metrics Q(b) and P(b)
+- **Figure 5 style overtaking fit**: observed vs simulated overtaking
+  distributions, with Wasserstein distance and waiting-time MAPE. The
+  reproduction script reports these two paper metrics separately; composite
+  calibration loss is kept in the extension script only.
+- **Stability analysis**: stable-like vs unstable-like queue trajectories with
+  ADF stationarity checks.
+- **Bounded Markov chain**: finite-bound estimates for `L`, `W`, `Q(b)`, and
+  `P(b)`.
+- **Effect of switching matrix**: heatmaps for queue-length, sojourn-time, and
+  variance metrics over the two-class switching-rate grid.
+- **Markov chain vs simulation validation**: finite-bound CTMC comparisons
+  against a long discrete-event simulation.
 
-## Extensions beyond the original paper
+## Implemented Extensions
 
-- **Heavy-tailed service times**: replaced the exponential service-time
-  assumption with Pareto-distributed service times in the simulation engine to
-  probe whether the stochastic switching mechanism degrades under long-tail
-  workloads.
-- **Parameter sensitivity calibration**: grid-based search over the Θ matrix
-  space to quantify how robust the fitting approach is to prior
-  misspecification.
+- **Fine-grid calibration of the switching matrix**: an 11x7 grid search over
+  `(theta12, theta21)` using an exploratory `calibration_loss` built from the
+  same overtaking/waiting-time loss components.
+- **Sojourn-time variance visualization**: phase-type second-moment calculations
+  and heatmaps over the switching-rate grid.
 
-## Quick start: browse results
+Not yet implemented: heavy-tailed / non-exponential switching experiments and
+the full stability-boundary map. These remain in `plan.md` as future work.
 
-Open **[results_summary.ipynb](results_summary.ipynb)** — a Jupyter notebook that
-displays all reproduction figures, metrics tables, and explanations in one place.
-Recommended for the course presentation.
+## Quick Start
 
-## Repository structure
+Open `results_summary.ipynb` to browse the generated figures, metrics tables,
+and explanations in one place. The slide deck source is in `slides/main.tex`,
+with a compiled PDF at `slides/main.pdf`.
 
-```
+## Repository Structure
+
+```text
 .
-├── README.md                    # Project overview (this file)
-├── results_summary.ipynb        # All results in one notebook
-├── results/                     # Reproduction figures and CSV metrics
-│   ├── figure5_replication.png
-│   ├── stability_replication.png
-│   ├── bounded_markov_replication.png
-│   └── extension_calibration_heatmap.png
-├── reproduction/                # Our reproduction & extension scripts
-│   ├── reproduce_figure5.py
-│   ├── reproduce_stability.py
-│   ├── reproduce_bounded_markov.py
-│   ├── extension_calibrate_H.py
-│   └── run_all.py               # Run all scripts in order
-├── original/                    # Original paper code (geraintpalmer/DynamicClasses)
-│   └── src/models/              # Ciw queue models
-├── SOR proposal.md              # Project proposal (Chinese)
-├── plan.md                      # Detailed project plan
-└── Queues under stochastic priority switching.pdf  # Original paper
+|-- README.md
+|-- results_summary.ipynb
+|-- results/
+|   |-- figure5_replication.png
+|   |-- stability_replication.png
+|   |-- bounded_markov_replication.png
+|   |-- effect_of_H_*.png
+|   |-- mc_vs_sim_comparison.png
+|   |-- sojourn_variance_*.png
+|   `-- extension_calibration_heatmap.png
+|-- reproduction/
+|   |-- reproduce_figure5.py
+|   |-- reproduce_stability.py
+|   |-- reproduce_bounded_markov.py
+|   |-- reproduce_effect_of_H.py
+|   |-- reproduce_mc_vs_sim.py
+|   |-- reproduce_sojourn_variance.py
+|   |-- extension_calibrate_H.py
+|   |-- run_parameter_variants.py
+|   `-- run_all.py
+|-- original/
+|   `-- src/models/
+|-- slides/
+|   |-- main.tex
+|   `-- main.pdf
+|-- SOR proposal.md
+|-- plan.md
+`-- Queues under stochastic priority switching.pdf
 ```
 
 ## Setup
 
 ```bash
 python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # macOS / Linux
+.venv\Scripts\activate
 pip install -r original/requirements.txt
 ```
 
-## Running the reproduction scripts
+The current local `.venv` may contain newer package versions than
+`original/requirements.txt`; record exact package versions before reporting
+final numerical values.
+
+## Reproduction Scope Notes
+
+The paper text and the original notebooks disagree in two places that affect
+numerical reproduction:
+
+- The stability illustration is described in the paper text with
+  `theta12=3, theta21=1`, while `original/src/Motivating Justification.ipynb`
+  uses `theta12=2, theta21=1`. The default reproduction follows the paper text;
+  use `--theta12 2 --theta21 1` to reproduce the notebook setting.
+- The bounded Markov approximation is described in the paper/LaTeX with
+  `mu2=5/2`, while `original/src/Demonstrate Checks.ipynb` uses `mu2=5/3`.
+  The default reproduction follows the paper text; use
+  `--service-rate2 1.6666666667` to reproduce the notebook setting.
+
+Zero switching rates are now handled exactly. Discrete-event simulations pass
+`None` to Ciw for disabled switching, while Markov-chain calculations use
+exact `0.0` transition rates.
+
+Existing files under `results/` may have been generated before these fixes.
+Rerun the relevant scripts before treating any metric table as final evidence.
+New CSV outputs include the main parameter settings used for that run.
+
+## Running The Scripts
+
+Run scripts from the repository root in module mode:
 
 ```bash
-# From the repo root:
-python reproduction/reproduce_figure5.py
-python reproduction/reproduce_stability.py
-python reproduction/reproduce_bounded_markov.py
-python reproduction/extension_calibrate_H.py
+python -m reproduction.reproduce_figure5
+python -m reproduction.reproduce_stability
+python -m reproduction.reproduce_bounded_markov
+python -m reproduction.reproduce_effect_of_H
+python -m reproduction.extension_calibrate_H
+```
 
-# Or run all at once:
-python reproduction/run_all.py
+Run the implemented suite:
+
+```bash
+python -m reproduction.run_all
+```
+
+Run the paper-text and original-notebook parameter variants into separate
+directories:
+
+```bash
+# Preview commands without running experiments:
+python -m reproduction.run_parameter_variants --dry-run
+
+# Run only the scripts affected by known paper/notebook parameter conflicts:
+python -m reproduction.run_parameter_variants --variant both
 ```
 
 Increase `--bounds`, `--trials`, or calibration grid sizes for higher-resolution
@@ -93,6 +151,5 @@ final runs.
 
 ## License
 
-The original code by Geraint Palmer is distributed under the MIT License
-(see [original/LICENSE](original/LICENSE)). Our
-reproduction and extension code is also available under the same terms.
+The original code by Geraint Palmer is distributed under the MIT License. This
+reproduction and extension code follows the same license terms.

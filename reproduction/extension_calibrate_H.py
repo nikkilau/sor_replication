@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -9,6 +10,7 @@ import pandas as pd
 from reproduction.utils import (
     add_common_paths,
     ensure_output_dirs,
+    ensure_results_dir,
     load_surgery_data,
     overtaking_metrics,
     parse_float_list,
@@ -31,7 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
 def main() -> None:
     args = build_parser().parse_args()
     ensure_output_dirs()
-    args.results_dir.mkdir(exist_ok=True)
+    ensure_results_dir(args.results_dir)
 
     observed = load_surgery_data()
     h12_values = parse_float_list(args.h12_values)
@@ -48,14 +50,29 @@ def main() -> None:
                 seed=args.seed,
             )
             metrics = overtaking_metrics(sim, observed)
-            loss = args.alpha * metrics["wasserstein"] + args.beta * metrics["mape"]
-            rows.append({"h12": h12, "h21": h21, **metrics, "loss": loss})
+            calibration_loss = (
+                args.alpha * metrics["wasserstein"] + args.beta * metrics["mape"]
+            )
+            rows.append(
+                {
+                    "h12": h12,
+                    "h21": h21,
+                    "trials": args.trials,
+                    "seed": args.seed,
+                    "alpha": args.alpha,
+                    "beta": args.beta,
+                    **metrics,
+                    "calibration_loss": calibration_loss,
+                }
+            )
 
-    df = pd.DataFrame(rows).sort_values("loss")
+    df = pd.DataFrame(rows).sort_values("calibration_loss")
     out_csv = args.results_dir / "extension_calibration_metrics.csv"
     df.to_csv(out_csv, index=False)
 
-    pivot = df.pivot(index="h21", columns="h12", values="loss").sort_index(ascending=True)
+    pivot = df.pivot(
+        index="h21", columns="h12", values="calibration_loss"
+    ).sort_index(ascending=True)
     fig, ax = plt.subplots(figsize=(10, 6))
     image = ax.imshow(pivot.to_numpy(), origin="lower", aspect="auto", cmap="viridis")
     ax.set_xticks(np.arange(len(pivot.columns)))
@@ -65,7 +82,7 @@ def main() -> None:
     ax.set_xlabel("h12")
     ax.set_ylabel("h21")
     ax.set_title("Calibration loss")
-    fig.colorbar(image, ax=ax, label="loss")
+    fig.colorbar(image, ax=ax, label="calibration loss")
 
     best = df.iloc[0]
     if best["h12"] in pivot.columns and best["h21"] in pivot.index:
