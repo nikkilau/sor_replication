@@ -167,7 +167,8 @@ def plot_heatmaps(
     # Remove unused sixth subplot
     axes[-1].set_visible(False)
 
-    fig.suptitle(f"Scenario {scenario_name[-1]}: {scenario_label}", fontsize=13, y=1.01)
+    scenario_id = scenario_name.split("_", 1)[0]
+    fig.suptitle(f"Scenario {scenario_id}: {scenario_label}", fontsize=13, y=1.01)
     fig.tight_layout()
 
     stem = f"effect_of_H_{scenario_name}"
