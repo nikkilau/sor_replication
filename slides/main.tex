@@ -1,4 +1,4 @@
-\documentclass[aspectratio=169,11pt]{beamer}
+\documentclass[aspectratio=169,10pt]{beamer}
 
 \usepackage[T1]{fontenc}
 \usepackage{lmodern}
@@ -9,25 +9,84 @@
 \usepackage{tabularx}
 \usepackage{array}
 
-\definecolor{primary}{HTML}{1F2937}
+\definecolor{primary}{HTML}{172033}
 \definecolor{accent}{HTML}{0F766E}
+\definecolor{accenttwo}{HTML}{D97706}
 \definecolor{muted}{HTML}{64748B}
-\definecolor{soft}{HTML}{F8FAFC}
+\definecolor{soft}{HTML}{F6F8FA}
+\definecolor{line}{HTML}{D9E2EC}
 \definecolor{warn}{HTML}{B45309}
 
 \usetheme{default}
 \usecolortheme{default}
+\setbeamersize{text margin left=8mm,text margin right=8mm}
+
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{normal text}{fg=primary}
 \setbeamercolor{title}{fg=primary}
-\setbeamercolor{frametitle}{fg=primary}
+\setbeamercolor{subtitle}{fg=muted}
+\setbeamercolor{author}{fg=muted}
+\setbeamercolor{date}{fg=muted}
+\setbeamercolor{frametitle}{fg=primary,bg=white}
 \setbeamercolor{structure}{fg=accent}
 \setbeamercolor{block title}{fg=white,bg=primary}
 \setbeamercolor{block body}{fg=primary,bg=soft}
 \setbeamercolor{alerted text}{fg=warn}
+\setbeamercolor{footline}{fg=muted,bg=white}
+\setbeamercolor{note}{fg=primary,bg=soft}
+
+\setbeamerfont{title}{size=\LARGE,series=\bfseries}
+\setbeamerfont{subtitle}{size=\large}
+\setbeamerfont{author}{size=\small}
+\setbeamerfont{date}{size=\small}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamerfont{block title}{size=\small,series=\bfseries}
+\setbeamerfont{block body}{size=\small}
+\setbeamerfont{footline}{size=\scriptsize}
+
 \setbeamertemplate{navigation symbols}{}
-\setbeamertemplate{footline}{%
-  \hfill\insertframenumber/\inserttotalframenumber\hspace{2mm}\vspace{2mm}%
-}
 \setbeamertemplate{caption}{\raggedright\insertcaption\par}
+\setbeamertemplate{itemize item}{\color{accent}$\bullet$}
+\setbeamertemplate{itemize subitem}{\color{accenttwo}$\circ$}
+\setbeamertemplate{blocks}[rounded][shadow=false]
+
+\setbeamertemplate{title page}{%
+  \vspace*{0.8cm}
+  {\color{accent}\rule{0.22\textwidth}{1.5pt}\hspace{0.45em}%
+   \color{accenttwo}\rule{0.07\textwidth}{1.5pt}}\par
+  \vspace{0.75cm}
+  {\usebeamerfont{title}\usebeamercolor[fg]{title}\inserttitle\par}
+  \vspace{0.4cm}
+  {\usebeamerfont{subtitle}\usebeamercolor[fg]{subtitle}\insertsubtitle\par}
+  \vfill
+  {\usebeamerfont{author}\usebeamercolor[fg]{author}\insertauthor\par}
+  \vspace{0.35cm}
+  {\usebeamerfont{date}\usebeamercolor[fg]{date}\insertdate\par}
+  \vspace{0.45cm}
+  {\footnotesize\textcolor{muted}{Original study: Palmer, Panayidis, Knight, and Williams, JORS.}}
+}
+
+\setbeamertemplate{frametitle}{%
+  \vspace{0.15cm}
+  \begin{beamercolorbox}[wd=\paperwidth,leftskip=8mm,rightskip=8mm,sep=0pt]{frametitle}
+    \usebeamerfont{frametitle}\insertframetitle\par
+  \end{beamercolorbox}
+  \vspace{-0.1cm}
+  \hspace*{8mm}{\color{accent}\rule{0.28\paperwidth}{0.7pt}}%
+  \vspace{0.2cm}
+}
+
+\setbeamertemplate{footline}{%
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.76\paperwidth,ht=2.7ex,dp=1ex,leftskip=8mm]{footline}%
+      \usebeamerfont{footline}\insertshorttitle%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.24\paperwidth,ht=2.7ex,dp=1ex,rightskip=8mm]{footline}%
+      \usebeamerfont{footline}\hfill\insertframenumber/\inserttotalframenumber%
+    \end{beamercolorbox}%
+  }%
+}
 
 \graphicspath{
   {../results/parameter_variants/common/}
@@ -36,86 +95,95 @@
   {../results/}
 }
 
-\title{Queues under Stochastic Priority Switching}
+\title[Replication diagnostics]{Queues under Stochastic Priority Switching}
 \subtitle{Replication Results, Diagnostics, and Extensions}
-\author{\small Stochastic Operations Research --- Course Project}
+\author{Stochastic Operations Research --- Course Project}
 \date{June 2026}
 
-\newcommand{\ok}{\textcolor{accent}{Supported}}
-\newcommand{\partialok}{\textcolor{warn}{Partial}}
-\newcommand{\notok}{\textcolor{warn}{Not confirmed}}
-\newcommand{\code}[1]{\texttt{#1}}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\newcommand{\ok}{\textcolor{accent}{\textbf{Supported}}}
+\newcommand{\partialok}{\textcolor{warn}{\textbf{Partial}}}
+\newcommand{\notok}{\textcolor{warn}{\textbf{Not confirmed}}}
+\newcommand{\code}[1]{{\ttfamily\footnotesize #1}}
+\newcommand{\tablefit}{\setlength{\tabcolsep}{3.5pt}\renewcommand{\arraystretch}{1.15}}
+\newcommand{\tightitems}{\setlength{\itemsep}{0.25em}\setlength{\parskip}{0pt}\setlength{\parsep}{0pt}}
+\newcommand{\figpanel}[1]{\includegraphics[width=\linewidth,height=0.62\textheight,keepaspectratio]{#1}}
 
 \begin{document}
 
-\begin{frame}
+\begin{frame}[plain]
 \titlepage
-\vspace{-1em}
-\begin{center}
-\small Original study: Palmer, Panayidis, Knight, and Williams, JORS.
-\end{center}
 \end{frame}
 
-\begin{frame}{Executive Assessment}
-\small
-\begin{tabularx}{\textwidth}{@{}p{0.28\textwidth}p{0.18\textwidth}X@{}}
+\begin{frame}[t]{Executive Assessment}
+\vspace{-0.35em}
+{\scriptsize\tablefit
+\begin{tabularx}{\textwidth}{@{}L{0.26\textwidth}L{0.16\textwidth}Y@{}}
 \toprule
 Experiment & Status & Evidence from current rerun \\
 \midrule
 Overtaking distribution, Fig.\ 5 & \partialok &
-The code reproduces the comparison workflow, but the paper candidate $(3,1)$ is not the best point in this run. \\
+Workflow reproduced, but the paper candidate $(3,1)$ is not the best point in this run. \\
 Stability / ADF check & \partialok &
-The original-notebook setting reproduces the stable/unstable split; the paper-text setting leaves the stable case inconclusive. \\
+Notebook rates reproduce the stable/unstable split; the paper-text stable case remains inconclusive. \\
 Bounded Markov approximation & \ok &
 Both parameter variants converge by $b=22$, with boundary quantities below $10^{-4}$. \\
 Effect of switching matrix $H$ & \partialok &
-Scenarios B and C satisfy the boundary threshold; Scenario A violates the $Q(16)<0.012$ check. \\
+Scenarios B and C pass the boundary threshold; Scenario A violates $Q(16)<0.012$. \\
 Extensions & \ok &
-Fine-grid calibration and sojourn-time variance are useful exploratory analyses, not replacements for paper metrics. \\
+Fine-grid calibration and sojourn-time variance are useful exploratory analyses. \\
 \bottomrule
 \end{tabularx}
+}
 
-\vspace{0.8em}
+\vspace{0.5em}
 \begin{block}{Bottom line}
+\footnotesize
 The reproduction pipeline is complete and informative, but the numerical evidence should be reported as a mixed replication rather than a full success.
 \end{block}
 \end{frame}
 
-\begin{frame}{Replication Architecture}
-\small
-\begin{columns}[T]
+\begin{frame}[t]{Replication Architecture}
+\footnotesize
+\begin{columns}[T,onlytextwidth]
 \column{0.48\textwidth}
 \begin{block}{Inputs}
 \begin{itemize}
-  \item Original source code under \code{original/src}
+  \tightitems
+  \item Original source code under \code{archive/original/src}
   \item Surgery waiting-list data from the original repository
   \item Paper-text parameters
   \item Original-notebook parameter variants
 \end{itemize}
 \end{block}
 
-\column{0.52\textwidth}
+\column{0.48\textwidth}
 \begin{block}{Reproduction layer}
 \begin{itemize}
-  \item \code{reproduction/utils.py}: shared data, simulation, and metric helpers
+  \tightitems
+  \item Shared data, simulation, and metric helpers
   \item One script per paper experiment
-  \item \code{run\_parameter\_variants.py}: paper-text and notebook runs
+  \item Parameter-variant runner for paper-text and notebook runs
   \item CSV metrics plus PNG figures for auditability
 \end{itemize}
 \end{block}
 \end{columns}
 
-\vspace{0.8em}
-\begin{center}
+\vfill
+\begin{beamercolorbox}[wd=\textwidth,sep=1ex,rounded=true]{note}
 \footnotesize
-Main result folders: \code{results/parameter\_variants/common},
+\textbf{Main result folders:}
+\code{results/parameter\_variants/common},
 \code{paper\_text}, and \code{original\_notebook}.
-\end{center}
+\end{beamercolorbox}
 \end{frame}
 
-\begin{frame}{Why Two Parameter Variants Were Needed}
-\small
-\begin{tabularx}{\textwidth}{@{}p{0.23\textwidth}p{0.23\textwidth}p{0.25\textwidth}X@{}}
+\begin{frame}[t]{Why Two Parameter Variants Were Needed}
+\vspace{-0.25em}
+{\footnotesize\tablefit
+\begin{tabularx}{\textwidth}{@{}L{0.22\textwidth}L{0.21\textwidth}L{0.24\textwidth}Y@{}}
 \toprule
 Experiment & Paper-text setting & Notebook setting & Impact \\
 \midrule
@@ -127,21 +195,24 @@ Figure 5 and effect of $H$ & Common run & Common run &
 No known paper-vs-notebook conflict in the current scripts. \\
 \bottomrule
 \end{tabularx}
+}
 
-\vspace{1em}
+\vspace{0.7em}
 \begin{block}{Reporting rule}
+\footnotesize
 Use the paper-defined metrics for reproduction claims. Use composite calibration loss only in the extension section.
 \end{block}
 \end{frame}
 
-\begin{frame}{Figure 5: Overtaking Distribution}
-\begin{columns}[T]
-\column{0.58\textwidth}
+\begin{frame}[t]{Figure 5: Overtaking Distribution}
+\begin{columns}[T,onlytextwidth]
+\column{0.56\textwidth}
 \centering
-\includegraphics[width=\textwidth]{figure5_replication.png}
+\figpanel{figure5_replication.png}
 
-\column{0.42\textwidth}
-\small
+\column{0.40\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lcc@{}}
 \toprule
 Criterion & Best point & Value \\
@@ -151,22 +222,25 @@ MAPE & $(2,2)$ & 0.0946 \\
 Paper candidate & $(3,1)$ & W=3.053,\; MAPE=0.366 \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The paper candidate is close under Wasserstein distance, but not under waiting-time MAPE. The original Fig.\ 5 conclusion is therefore not fully reproduced by the current run.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Stability: ADF Diagnostics}
-\begin{columns}[T]
-\column{0.58\textwidth}
+\begin{frame}[t]{Stability: ADF Diagnostics}
+\begin{columns}[T,onlytextwidth]
+\column{0.56\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../results/parameter_variants/original_notebook/stability_replication.png}
+\figpanel{../results/parameter_variants/original_notebook/stability_replication.png}
 
-\column{0.42\textwidth}
-\small
+\column{0.40\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lcc@{}}
 \toprule
 Variant & Stable case $p$ & Unstable case $p$ \\
@@ -175,22 +249,25 @@ Paper text & 0.156 & 0.856 \\
 Notebook & 0.00385 & 0.864 \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The stable/nonstationary contrast is reproduced under the original-notebook switching rates. The paper-text stable case remains visually bounded but fails the $p<0.05$ ADF criterion.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Bounded Markov Approximation}
-\begin{columns}[T]
-\column{0.58\textwidth}
+\begin{frame}[t]{Bounded Markov Approximation}
+\begin{columns}[T,onlytextwidth]
+\column{0.56\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/bounded_markov_replication.png}
+\figpanel{../results/parameter_variants/paper_text/bounded_markov_replication.png}
 
-\column{0.42\textwidth}
-\small
+\column{0.40\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lccc@{}}
 \toprule
 Variant, $b=22$ & $L$ & $W$ & $Q(b)$ \\
@@ -199,19 +276,22 @@ Paper text & 1.620 & 1.620 & $5.88{\times}10^{-5}$ \\
 Notebook & 1.916 & 1.916 & $7.61{\times}10^{-5}$ \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 This is the strongest replication result. Truncation error becomes small in both parameter variants, and $L$ and $W$ stabilize as the bound grows.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Effect of Switching Matrix $H$}
-\small
-\begin{tabularx}{\textwidth}{@{}p{0.24\textwidth}ccccX@{}}
+\begin{frame}[t]{Effect of Switching Matrix $H$}
+\vspace{-0.3em}
+{\scriptsize\tablefit
+\begin{tabularx}{\textwidth}{@{}L{0.20\textwidth}ccccY@{}}
 \toprule
-Scenario & max $Q(16)$ & max $P(16)$ & $U_{\min}$ & $U_{\max}$ & Assessment \\
+Scenario & $Q(16)$ & $P(16)$ & $U_{\min}$ & $U_{\max}$ & Assessment \\
 \midrule
 A: prioritized slower & 0.0822 & 0.0120 & 1.704 & 7.927 &
 \partialok: $P$ is within threshold, but $Q$ exceeds 0.012 at 181 grid points. \\
@@ -221,21 +301,24 @@ C: prioritized faster & 0.0102 & 0.00152 & 0.521 & 2.257 &
 \ok: boundary checks pass across the grid. \\
 \bottomrule
 \end{tabularx}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The qualitative heatmap workflow is reproduced, but Scenario A should not be described as satisfying the paper's stated boundary check.
 \end{block}
 \end{frame}
 
-\begin{frame}{Markov Chain vs Simulation}
-\small
-\begin{columns}[T]
+\begin{frame}[t]{Markov Chain vs Simulation}
+\begin{columns}[T,onlytextwidth]
 \column{0.52\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/mc_vs_sim_comparison.png}
+\figpanel{../results/parameter_variants/paper_text/mc_vs_sim_comparison.png}
 
-\column{0.48\textwidth}
+\column{0.44\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lcc@{}}
 \toprule
 Variant & W-error range & State-W range \\
@@ -244,22 +327,25 @@ Paper text & 5.93--7.68\% & 0.251--0.395 \\
 Notebook & 4.43--6.29\% & 0.104--0.308 \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The validation is directionally reasonable, especially for state distributions, but the simulation horizon is short relative to the paper-scale long run.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Sojourn-Time Variance}
-\begin{columns}[T]
-\column{0.5\textwidth}
+\begin{frame}[t]{Sojourn-Time Variance}
+\begin{columns}[T,onlytextwidth]
+\column{0.50\textwidth}
 \centering
-\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/sojourn_variance_convergence.png}
+\figpanel{../results/parameter_variants/paper_text/sojourn_variance_convergence.png}
 
-\column{0.5\textwidth}
-\small
+\column{0.46\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lccc@{}}
 \toprule
 Variant & $b$ & $W$ & Var$(W)$ \\
@@ -268,22 +354,25 @@ Paper text & 16 & 1.622 & 5.649 \\
 Notebook & 16 & 1.918 & 7.231 \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The second-moment computation is internally consistent and useful. It should be presented as part reproduction of the absorbing-chain moment formulas plus additional visualization.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Extension: Fine-Grid Calibration}
-\begin{columns}[T]
+\begin{frame}[t]{Extension: Fine-Grid Calibration}
+\begin{columns}[T,onlytextwidth]
 \column{0.52\textwidth}
 \centering
-\includegraphics[width=\textwidth]{extension_calibration_heatmap.png}
+\figpanel{extension_calibration_heatmap.png}
 
-\column{0.48\textwidth}
-\small
+\column{0.44\textwidth}
+\footnotesize
+\resizebox{\linewidth}{!}{%
 \begin{tabular}{@{}lccc@{}}
 \toprule
 Criterion & Point & W & MAPE \\
@@ -294,18 +383,23 @@ Best MAPE & $(3.5,2)$ & 3.368 & 0.108 \\
 Paper point & $(3,1)$ & 3.977 & 0.518 \\
 \bottomrule
 \end{tabular}
+}
 
-\vspace{0.8em}
+\vspace{0.65em}
 \begin{block}{Interpretation}
+\footnotesize
 The composite loss is useful for screening the calibration landscape, but it is not a paper metric and is not normalized. It supports sensitivity analysis, not a definitive claim.
 \end{block}
 \end{columns}
 \end{frame}
 
-\begin{frame}{Main Takeaways}
-\small
+\begin{frame}[t]{Main Takeaways}
+\footnotesize
+\begin{columns}[T,onlytextwidth]
+\column{0.48\textwidth}
 \begin{block}{What worked}
 \begin{itemize}
+  \tightitems
   \item The repository now produces a complete, auditable result set for all implemented scripts.
   \item Bounded Markov convergence is robust under both parameter variants.
   \item The original-notebook stability experiment reproduces the expected split.
@@ -313,20 +407,26 @@ The composite loss is useful for screening the calibration landscape, but it is 
 \end{itemize}
 \end{block}
 
+\column{0.48\textwidth}
 \begin{block}{What needs caution}
 \begin{itemize}
+  \tightitems
   \item Fig.\ 5 does not confirm $(\theta_{12},\theta_{21})=(3,1)$ as the unique or best fit.
   \item Paper-text stability and Scenario A effect-of-$H$ boundary checks are not fully reproduced.
   \item MC-vs-sim validation needs longer simulation and confidence intervals before stronger claims.
 \end{itemize}
 \end{block}
+\end{columns}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-{\Large \textbf{Thank you}}\\[1.5em]
-{\small Questions and discussion}
-\end{center}
+\begin{frame}[plain]
+\vspace*{1.4cm}
+{\color{accent}\rule{0.18\textwidth}{1.4pt}\hspace{0.45em}%
+ \color{accenttwo}\rule{0.06\textwidth}{1.4pt}}\par
+\vspace{0.75cm}
+{\Huge\textbf{Thank you}}\par
+\vspace{0.45cm}
+{\large\textcolor{muted}{Questions and discussion}}
 \end{frame}
 
 \end{document}

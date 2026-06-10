@@ -23,10 +23,10 @@
 \setlist[itemize]{leftmargin=1.8em}
 \setlist[enumerate]{leftmargin=1.8em}
 \graphicspath{
-  {results/parameter_variants/common/}
-  {results/parameter_variants/paper_text/}
-  {results/parameter_variants/original_notebook/}
-  {results/}
+  {../results/parameter_variants/common/}
+  {../results/parameter_variants/paper_text/}
+  {../results/parameter_variants/original_notebook/}
+  {../results/}
 }
 
 \title{《Queues under Stochastic Priority Switching》复现报告}
@@ -64,7 +64,7 @@
 
 \subsection{复现代码结构}
 
-复现层位于 \path{reproduction/}，没有直接改写原始模型库，而是以包装脚本的方式调用 \path{original/src} 中的原始模型函数。主要模块如下：
+复现层位于 \path{reproduction/}，没有直接改写原始模型库，而是以包装脚本的方式调用 \path{archive/original/src} 中的原始模型函数。主要模块如下：
 
 \begin{longtable}{@{}p{0.34\textwidth}p{0.57\textwidth}@{}}
 \toprule
@@ -87,13 +87,13 @@
 本轮完整实验结果主要位于：
 
 \begin{itemize}
-  \item \path{results/parameter_variants/common/}：无明显论文文本/原 notebook 参数冲突的共同实验，包括 Figure 5 和 effect-of-$H$。
-  \item \path{results/parameter_variants/paper_text/}：采用论文文本参数的 bounded Markov、stability、MC-vs-sim、variance 实验。
-  \item \path{results/parameter_variants/original_notebook/}：采用原始 notebook 参数的对应实验。
-  \item \path{results/extension_calibration_metrics.csv} 与 \path{results/extension_calibration_heatmap.png}：扩展校准实验。
+  \item \path{../results/parameter_variants/common/}：无明显论文文本/原 notebook 参数冲突的共同实验，包括 Figure 5 和 effect-of-$H$。
+  \item \path{../results/parameter_variants/paper_text/}：采用论文文本参数的 bounded Markov、stability、MC-vs-sim、variance 实验。
+  \item \path{../results/parameter_variants/original_notebook/}：采用原始 notebook 参数的对应实验。
+  \item \path{../results/extension_calibration/}：扩展校准实验。
 \end{itemize}
 
-根目录 \path{results/} 中也存在历史输出。由于这些文件可能来自修正之前的版本，最终分析应优先采用 \path{results/parameter_variants/} 下的新输出。
+早期输出已按实验类型归类至 \path{../results/} 的子目录（\path{figure5/}、\path{effect_of_H/}、\path{bounded_markov/}、\path{mc_vs_sim/}、\path{sojourn_variance/}）中。这些文件可能来自修正之前的版本，最终分析应优先采用 \path{../results/parameter_variants/} 下的新输出。
 
 \section{参数口径：论文文本 vs 原始 notebook}
 
@@ -127,7 +127,7 @@ Figure 5 复现实验使用原始仓库中的手术等待列表数据作为 obse
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.88\textwidth]{results/parameter_variants/common/figure5_replication.png}
+\includegraphics[width=0.88\textwidth]{../results/parameter_variants/common/figure5_replication.png}
 \caption{Figure 5 风格的 overtaking 分布复现图。}
 \end{figure}
 
@@ -173,13 +173,13 @@ Figure 5 复现实验使用原始仓库中的手术等待列表数据作为 obse
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/paper_text/stability_replication.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/stability_replication.png}
 \caption{论文文本参数}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/original_notebook/stability_replication.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/original_notebook/stability_replication.png}
 \caption{原始 notebook 参数}
 \end{subfigure}
 \caption{稳定性复现的两种参数口径。}
@@ -210,13 +210,13 @@ Bounded Markov 实验计算不同截断 bound 下的平均系统人数 $L$、平
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/paper_text/bounded_markov_replication.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/bounded_markov_replication.png}
 \caption{论文文本参数}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/original_notebook/bounded_markov_replication.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/original_notebook/bounded_markov_replication.png}
 \caption{原始 notebook 参数}
 \end{subfigure}
 \caption{Bounded Markov approximation 随截断边界的变化。}
@@ -267,7 +267,7 @@ MC-vs-sim 实验用于检查 bounded Markov 结果和离散事件仿真的一致
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{results/parameter_variants/paper_text/mc_vs_sim_comparison.png}
+\includegraphics[width=0.82\textwidth]{../results/parameter_variants/paper_text/mc_vs_sim_comparison.png}
 \caption{论文文本参数下的 Markov chain vs simulation 比较。}
 \end{figure}
 
@@ -296,13 +296,13 @@ Sojourn-time variance 实验基于吸收 Markov 链矩公式计算 $W$ 的方差
 \centering
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/paper_text/sojourn_variance_convergence.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/sojourn_variance_convergence.png}
 \caption{Variance convergence}
 \end{subfigure}
 \hfill
 \begin{subfigure}{0.48\textwidth}
 \centering
-\includegraphics[width=\textwidth]{results/parameter_variants/paper_text/sojourn_variance_heatmap.png}
+\includegraphics[width=\textwidth]{../results/parameter_variants/paper_text/sojourn_variance_heatmap.png}
 \caption{Variance heatmap}
 \end{subfigure}
 \caption{论文文本参数下的 sojourn-time variance 结果。}
@@ -341,7 +341,7 @@ Sojourn-time variance 实验基于吸收 Markov 链矩公式计算 $W$ 的方差
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.65\textwidth]{results/extension_calibration_heatmap.png}
+\includegraphics[width=0.65\textwidth]{../results/extension_calibration/extension_calibration_heatmap.png}
 \caption{扩展校准综合损失热图。}
 \end{figure}
 
@@ -408,15 +408,15 @@ python -m reproduction.extension_calibrate_H
 主要输出文件包括：
 
 \begin{itemize}
-  \item \path{results/parameter_variants/common/figure5_metrics.csv}
-  \item \path{results/parameter_variants/common/effect_of_H_A_prioritized_slower.csv}
-  \item \path{results/parameter_variants/common/effect_of_H_B_equal.csv}
-  \item \path{results/parameter_variants/common/effect_of_H_C_prioritized_faster.csv}
-  \item \path{results/parameter_variants/paper_text/stability_metrics.csv}
-  \item \path{results/parameter_variants/original_notebook/stability_metrics.csv}
-  \item \path{results/parameter_variants/paper_text/bounded_markov_metrics.csv}
-  \item \path{results/parameter_variants/original_notebook/bounded_markov_metrics.csv}
-  \item \path{results/extension_calibration_metrics.csv}
+  \item \path{../results/parameter_variants/common/figure5_metrics.csv}
+  \item \path{../results/parameter_variants/common/effect_of_H_A_prioritized_slower.csv}
+  \item \path{../results/parameter_variants/common/effect_of_H_B_equal.csv}
+  \item \path{../results/parameter_variants/common/effect_of_H_C_prioritized_faster.csv}
+  \item \path{../results/parameter_variants/paper_text/stability_metrics.csv}
+  \item \path{../results/parameter_variants/original_notebook/stability_metrics.csv}
+  \item \path{../results/parameter_variants/paper_text/bounded_markov_metrics.csv}
+  \item \path{../results/parameter_variants/original_notebook/bounded_markov_metrics.csv}
+  \item \path{../results/extension_calibration/extension_calibration_metrics.csv}
 \end{itemize}
 
 \end{document}

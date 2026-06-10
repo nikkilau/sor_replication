@@ -23,6 +23,10 @@ build/
 *.log
 *.bbl
 *.blg
+*.synctex.gz
+*.toc
+*.nav
+*.snm
 */_minted-main/*
 
 # OS
