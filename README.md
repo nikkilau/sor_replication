@@ -15,7 +15,7 @@ discrete-event simulation model using Ciw and continuous-time Markov chain
 formulations for system-level and sojourn-time metrics.
 
 Original code: [geraintpalmer/DynamicClasses](https://github.com/geraintpalmer/DynamicClasses)
-(MIT License, see `archive/original/LICENSE`).
+(MIT License, see `original/LICENSE`).
 
 ## Implemented Reproductions
 
@@ -75,9 +75,9 @@ with a compiled PDF at `slides/main.pdf`.
 |   |-- run_parameter_variants.py
 |   `-- run_all.py
 |-- archive/
-|   |-- legacy_results/
-|   `-- original/
-|       `-- src/models/
+|   `-- legacy_results/
+|-- original/
+|   `-- src/models/
 |-- slides/
 |   |-- main.tex
 |   |-- main.pdf
@@ -92,7 +92,7 @@ with a compiled PDF at `slides/main.pdf`.
 ```bash
 python -m venv .venv
 .venv\Scripts\activate
-pip install -r archive/original/requirements.txt  # if available; see reproduction/ for current scripts
+pip install -r original/requirements.txt  # if available; see reproduction/ for current scripts
 ```
 
 The current local `.venv` may contain newer package versions than the
@@ -105,11 +105,11 @@ The paper text and the original notebooks disagree in two places that affect
 numerical reproduction:
 
 - The stability illustration is described in the paper text with
-  `theta12=3, theta21=1`, while the original notebook at `archive/original/src/Motivating Justification.ipynb`
+  `theta12=3, theta21=1`, while the original notebook at `original/src/Motivating Justification.ipynb`
   uses `theta12=2, theta21=1`. The default reproduction follows the paper text;
   use `--theta12 2 --theta21 1` to reproduce the notebook setting.
 - The bounded Markov approximation is described in the paper/LaTeX with
-  `mu2=5/2`, while the original notebook at `archive/original/src/Demonstrate Checks.ipynb` uses `mu2=5/3`.
+  `mu2=5/2`, while the original notebook at `original/src/Demonstrate Checks.ipynb` uses `mu2=5/3`.
   The default reproduction follows the paper text; use
   `--service-rate2 1.6666666667` to reproduce the notebook setting.
 
